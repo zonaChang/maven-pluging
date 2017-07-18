@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nodes id="db">
+	<item name="url" value="${db.url}" desc=""></item>
+	<item name="username" value="${db.username}" desc=""></item>
+	<item name="password" value="${db.password}" desc=""></item>
+</nodes>

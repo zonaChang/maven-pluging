@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>study</groupId>
+  <artifactId>maven</artifactId>
+  <packaging>war</packaging>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>maven Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+  
+  
+  <!-- 自定义变量 -->
+  <properties>
+  	<!-- 定义打包环境标志 -->
+  	<project.environment>dev</project.environment>
+  </properties>
+	<dependencies>
+		<dependency>
+			<groupId>ro.isdc.wro4j</groupId>
+			<artifactId>wro4j-core</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+	</dependencies>
+  
+  <build>
+  	<!-- 打出包的名字获取名字的一部分 -->
+    <finalName>maven-packge-name</finalName>
+    <plugins>
+    	   <plugin>
+    <groupId>ro.isdc.wro4j</groupId>
+    <artifactId>wro4j-maven-plugin</artifactId>
+    <version>1.6.2</version>
+    <executions>
+     <execution>
+      <phase>compile</phase>
+      <goals>
+       <goal>run</goal>
+      </goals>
+     </execution>
+    </executions>
+    <configuration>
+     <targetGroups>css,js</targetGroups>
+
+    <!-- 这个配置是告诉wro4j在打包静态资源的时候是否需要最小化文件,开发的时候可以设成false,方便调试 -->
+     <minimize>true</minimize>
+     <wroFile>wro.xml</wroFile>
+     <jsDestinationFolder>${project.build.directory}/${project.build.finalName}/sources/js</jsDestinationFolder>
+     <cssDestinationFolder>${project.build.directory}/${project.build.finalName}/sources/css</cssDestinationFolder>
+<!--      <destinationFolder>${project.build.directory}/src/main/webapp/wro/</destinationFolder> -->
+<!--      <contextFolder>${project.build.directory}/src/main/webapp/</contextFolder> -->
+
+<!-- 这个配置是第二步优化需要用到的,暂时忽略 -->
+     <wroManagerFactory>com.rootrip.platform.common.web.wro.CustomWroManagerFactory</wroManagerFactory>
+    </configuration>
+         </plugin>
+    </plugins>
+  </build>
+</project>

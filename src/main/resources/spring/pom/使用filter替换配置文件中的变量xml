@@ -1,0 +1,61 @@
+  <!-- 自定义变量 -->
+  <properties>
+  	<!-- 定义打包环境标志 -->
+  	<project.environment>dev</project.environment>
+  </properties>
+  
+  <dependencies>
+	  <dependency>
+	   <groupId>ro.isdc.wro4j</groupId>
+	   <artifactId>wro4j-core</artifactId>
+	   <version>1.6.2</version>
+	  </dependency>  
+  </dependencies>
+  
+  <build>
+  	<!-- 打出包的名字获取名字的一部分 -->
+    <finalName>maven-packge-name</finalName>
+    <plugins>
+	    <plugin>
+	      <groupId>org.apache.maven.plugins</groupId>
+	      <artifactId>maven-war-plugin</artifactId>
+	      <version>2.4</version>
+	      <executions>
+	          <execution>
+	              <id>prepare-war</id>
+	              <phase>prepare-package</phase>
+	              <goals>
+	                  <goal>exploded</goal>
+	              </goals>
+	          </execution>
+	      </executions>
+	      <configuration>
+	          <useCache>true</useCache>
+	          <warSourceExcludes>sources/**/*.js,sources/**/*.css</warSourceExcludes>
+	      </configuration>
+	    </plugin>
+	    
+	    <plugin>
+             <groupId>ro.isdc.wro4j</groupId>
+             <artifactId>wro4j-maven-plugin</artifactId>
+             <version>1.6.2</version>
+             <executions>
+                 <execution>
+                     <phase>compile</phase>
+                     <goals>
+                         <goal>run</goal>
+                     </goals>
+                 </execution>
+             </executions>
+             <configuration>
+                 <targetGroups>vendor,app,app.templates,init</targetGroups>
+                 <minimize>true</minimize>
+                 <wroFile>wro.xml</wroFile>
+                 <jsDestinationFolder>${project.build.directory}/${project.build.finalName}/h5kaihu/js</jsDestinationFolder>
+                 <cssDestinationFolder>${project.build.directory}/${project.build.finalName}/h5kaihu/css</cssDestinationFolder>
+             </configuration>
+         </plugin>
+    </plugins>
+  </build>
+
+
