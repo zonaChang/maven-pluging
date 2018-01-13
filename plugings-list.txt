@@ -1,0 +1,5 @@
+1. 前端代码压缩
+wro4j-maven-plugin(需要maven-war-plugin插件支持)
+
+2. ant脚本插件
+maven-antrun-plugin(需要maven-war-plugin插件支持)

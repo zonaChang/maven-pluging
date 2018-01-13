@@ -1,19 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>study</groupId>
-  <artifactId>maven</artifactId>
-  <packaging>war</packaging>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>maven Maven Webapp</name>
-  <url>http://maven.apache.org</url>
-  
-  
-  <!-- 自定义变量 -->
-  <properties>
-  	<!-- 定义打包环境标志 -->
-  	<project.environment>dev</project.environment>
-  </properties>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>study</groupId>
+	<artifactId>maven</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>maven Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+
+
+	<!-- 自定义变量 -->
+<!-- 	<properties> -->
+		<!-- 定义打包环境标志 -->
+<!-- 		<project.environment>dev</project.environment> -->
+<!-- 	</properties> -->
 	<dependencies>
 		<dependency>
 			<groupId>ro.isdc.wro4j</groupId>
@@ -21,104 +21,158 @@
 			<version>1.6.2</version>
 		</dependency>
 	</dependencies>
-  
-  <build>
-  	<!-- 打出包的名字获取名字的一部分 -->
-    <finalName>maven-packge-name</finalName>
-    <plugins>
-    	<!-- 压缩前端代码开始 start -->
-    	<!-- 1. 过滤掉原来的文件，否则最终打出来的包中会包含原来分开的文件如a.js, b.js, c.js 等  -->
-    	<plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-war-plugin</artifactId>
-            <version>2.4</version>
-            <executions>
-                <execution>
-                    <id>prepare-war</id>
-                    <phase>prepare-package</phase>
-                    <goals>
-                        <goal>exploded</goal>
-                    </goals>
-                </execution>
-            </executions>
-            <configuration>
-                <useCache>true</useCache>
-                <warSourceExcludes>sources/**/*.js,sources/**/*.css</warSourceExcludes>
-            </configuration>
-        </plugin>
-        <!--  -->
-   		<plugin>
-		    <groupId>ro.isdc.wro4j</groupId>
-		    <artifactId>wro4j-maven-plugin</artifactId>
-		    <version>1.6.2</version>
-		    <executions>
-		     <execution>
-		      <phase>compile</phase>
-		      <goals>
-		       <goal>run</goal>
-		      </goals>
-		     </execution>
-		    </executions>
-		    <configuration>
-		     <targetGroups>css,js</targetGroups>
-		
-		    <!-- 这个配置是告诉wro4j在打包静态资源的时候是否需要最小化文件,开发的时候可以设成false,方便调试 -->
-		     <minimize>false</minimize>
-		     <wroFile>wro.xml</wroFile>
-		     <!-- 指定打包后文件存放位置 -->
-		     <jsDestinationFolder>${project.build.directory}/${project.build.finalName}/sources/aa/js</jsDestinationFolder>
-		     <cssDestinationFolder>${project.build.directory}/${project.build.finalName}/sources/bb/css</cssDestinationFolder>
-		<!--      <destinationFolder>${project.build.directory}/src/main/webapp/wro/</destinationFolder> -->
-		<!--      <contextFolder>${project.build.directory}/src/main/webapp/</contextFolder> -->
-		
-		<!-- 这个配置是第二步优化需要用到的,暂时忽略 -->
-		<!--      <wroManagerFactory>com.rootrip.platform.common.web.wro.CustomWroManagerFactory</wroManagerFactory> -->
-		    </configuration>
-         </plugin>
-         
-         <!-- 压缩前端代码结束 end -->
-         
-         
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <phase>prepare-package</phase>
-                        <configuration>
-                            <target>
-                                <replaceregexp flags="smg" file="${project.build.directory}/${project.build.finalName}/index.html">
-                                    <regexp pattern="!-- mergeTo:(.*?).js --.*?-- mergeTo --" />
-                                    <substitution expression="script type=&quot;text/javascript&quot; src=&quot;./js/\1.js&quot;&gt;&lt;/script" />
-                                </replaceregexp>
-                                <replace file="${project.build.directory}/${project.build.finalName}/sources/aa/js/js.js">
-                                    <replacetoken>'</replacetoken>
-                                    <replacevalue>\'</replacevalue>
-                                </replace>
-                                <replace file="${project.build.directory}/${project.build.finalName}/sources/aa/js/js.js">
-                                    <replacetoken>`</replacetoken>
-                                    <replacevalue>'</replacevalue>
-                                </replace>
-                                <replace file="${project.build.directory}/${project.build.finalName}/sources/aa/js/js.js">
-                                    <replacetoken>`</replacetoken>
-                                    <replacevalue>'</replacevalue>
-                                </replace>
-                                <replaceregexp flags="mg" file="${project.build.directory}/${project.build.finalName}/sources/aa/js/js.js">
-                                    <regexp pattern="^([^A-Za-z\r\n\t].+)$" />
-                                    <substitution expression="'\1" />
-                                </replaceregexp>
-                                <replaceregexp flags="mg" file="${project.build.directory}/${project.build.finalName}/sources/aa/js/js.js">
-                                    <regexp pattern="^(.+[^;])$" />
-                                    <substitution expression="\1'+" />
-                                </replaceregexp>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-    </plugins>
-  </build>
+	<profiles>
+		<!-- 通过命令-P添加参数确定要激活的配置 -Pdev 激活id为dev的配置, -Pproduct激活id为product的配置 -->
+		<profile>
+			<id>dev</id>
+			<properties>
+				<project.environment>dev</project.environment>
+			</properties>
+			<!-- 如果没有-P参数, 默认激活当前配置 -->
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>product</id>
+			<properties>
+				<project.environment>product</project.environment>
+			</properties>
+		</profile>
+	</profiles>
+	<build>
+		<!-- 打出包的名字获取名字的一部分 -->
+		<finalName>maven-packge-name</finalName>
+		<filters>
+			<filter>src/filters/config_filter_${project.environment}.properties</filter>
+		</filters>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<!-- 使用filter填充配置文件中的占位符, 仅将匹配到的文件添加到classes下. 为了将其他资源也添加到classes下, 需要在配置一个filter为false的resouse配置 -->
+				<filtering>true</filtering>
+				<!-- 替换指定类型的文件, 且将这类文件添加到classes下. 未匹配到的文件不会添加到classes中 -->
+				<includes>
+					<!-- 当前目录下的xml文件 -->
+<!-- 					<include>*.xml</include> -->
+					<!-- 当前目录及其子目录下的xml文件 -->
+					<include>**/*.xml</include>
+				</includes>
+			</resource>
+			
+			<!-- 将filter为过滤到的资源打包到classes中 -->
+			<resource>
+				<directory>src/main/resources</directory>
+				<!-- 使用filter填充配置文件中的占位符 -->
+				<filtering>false</filtering>
+				<!-- 将除了匹配到的文件, 之外的文件添加到classes下.  -->
+				<excludes>
+					<exclude>**/*.xml</exclude>
+				</excludes>
+			</resource>
+		</resources>
+
+		<plugins>
+			<!-- 压缩前端代码开始 start -->
+			<!-- 1. 过滤掉原来的文件，否则最终打出来的包中会包含原来分开的文件如a.js, b.js, c.js 等 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>prepare-war</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>exploded</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<useCache>true</useCache>
+					<warSourceExcludes>sources/**/*.js,sources/**/*.css</warSourceExcludes>
+				</configuration>
+			</plugin>
+			
+			<!--压缩前端代码 -->
+			<plugin>
+				<groupId>ro.isdc.wro4j</groupId>
+				<artifactId>wro4j-maven-plugin</artifactId>
+				<version>1.6.2</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<targetGroups>css,js</targetGroups>
+
+					<!-- 这个配置是告诉wro4j在打包静态资源的时候是否需要最小化文件,开发的时候可以设成false,方便调试 -->
+					<minimize>false</minimize>
+					<wroFile>wro.xml</wroFile>
+					<!-- 指定打包后文件存放位置 -->
+					<jsDestinationFolder>${project.build.directory}/${project.build.finalName}/sources/aa/js</jsDestinationFolder>
+					<cssDestinationFolder>${project.build.directory}/${project.build.finalName}/sources/bb/css</cssDestinationFolder>
+					<!-- <destinationFolder>${project.build.directory}/src/main/webapp/wro/</destinationFolder> -->
+					<!-- <contextFolder>${project.build.directory}/src/main/webapp/</contextFolder> -->
+
+					<!-- 这个配置是第二步优化需要用到的,暂时忽略 -->
+					<!-- <wroManagerFactory>com.rootrip.platform.common.web.wro.CustomWroManagerFactory</wroManagerFactory> -->
+				</configuration>
+			</plugin>
+
+			<!-- ant脚本插件,需要配置maven-war-plugin -->
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<configuration>
+							<target>
+								<replaceregexp flags="smg"
+									file="${project.build.directory}/${project.build.finalName}/index.html">
+									<regexp pattern="!-- mergeTo:(.*?).js --.*?-- mergeTo --" />
+									<substitution
+										expression="script type=&quot;text/javascript&quot; src=&quot;./js/\1.js&quot;&gt;&lt;/script" />
+								</replaceregexp>
+								<replace
+									file="${project.build.directory}/${project.build.finalName}/sources/aa/js/js.js">
+									<replacetoken>'</replacetoken>
+									<replacevalue>\'</replacevalue>
+								</replace>
+								<replace
+									file="${project.build.directory}/${project.build.finalName}/sources/aa/js/js.js">
+									<replacetoken>`</replacetoken>
+									<replacevalue>'</replacevalue>
+								</replace>
+								<replace
+									file="${project.build.directory}/${project.build.finalName}/sources/aa/js/js.js">
+									<replacetoken>`</replacetoken>
+									<replacevalue>'</replacevalue>
+								</replace>
+								<replaceregexp flags="mg"
+									file="${project.build.directory}/${project.build.finalName}/sources/aa/js/js.js">
+									<regexp pattern="^([^A-Za-z\r\n\t].+)$" />
+									<substitution expression="'\1" />
+								</replaceregexp>
+								<replaceregexp flags="mg"
+									file="${project.build.directory}/${project.build.finalName}/sources/aa/js/js.js">
+									<regexp pattern="^(.+[^;])$" />
+									<substitution expression="\1'+" />
+								</replaceregexp>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
